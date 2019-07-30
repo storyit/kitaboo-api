@@ -20,9 +20,10 @@ public class OAuthApplication {
 		SpringApplication.run(OAuthApplication.class, args);
 		String getServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/ListBooks";
 
-		if (System.getenv("ACTION") == "list_books") {
+		if (System.getenv("ACTION").equals("list_books")) {
 			String methodGet = "GET";
-			String response = callGetService(getServiceUrl, System.getenv("CONSUMER_KEY"), System.getenv("SECRET_KEY"), methodGet);
+			String response = callGetService(getServiceUrl, System.getenv("CONSUMER_KEY"), System.getenv("SECRET_KEY"),
+					methodGet);
 			System.out.println(response);
 		}
 	}
