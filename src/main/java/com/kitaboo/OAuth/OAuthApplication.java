@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Scanner;
@@ -18,17 +19,22 @@ public class OAuthApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(OAuthApplication.class, args);
-		String getServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/ListBooks";
 
 		if (System.getenv("ACTION").equals("list_books")) {
-			String methodGet = "GET";
-			String response = callGetService(getServiceUrl, System.getenv("CONSUMER_KEY"), System.getenv("SECRET_KEY"),
-					methodGet);
+			String getServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/ListBooks";
+			String response = callGetService(getServiceUrl, System.getenv("CONSUMER_KEY"), System.getenv("SECRET_KEY"));
 			System.out.println(response);
+		} else if (System.getenv("ACTION").equals("register_user")) {
+			String postServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/registerUser";
+			String body = System.getenv("DATA");
+			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
+					System.getenv("SECRET_KEY"), body);
+			System.out.println(response);
+
 		}
 	}
 
-	public static String callGetService(String serviceEndPoint, String consumerKey, String secretKey, String method) {
+	public static String callGetService(String serviceEndPoint, String consumerKey, String secretKey) {
 		String response = new String();
 		HttpURLConnection urlConnection = null;
 		try {
@@ -36,7 +42,7 @@ public class OAuthApplication {
 			urlConnection = (HttpURLConnection) url.openConnection();
 			// Create an HttpURLConnection and add some headers
 			urlConnection.setRequestProperty("Accept", "application/json");
-			urlConnection.setRequestMethod(method);
+			urlConnection.setRequestMethod("GET");
 			urlConnection.setReadTimeout(5 * 60 * 1000);
 			urlConnection.setDoOutput(true);
 
@@ -60,8 +66,7 @@ public class OAuthApplication {
 		return response;
 	}
 
-	public static String callPostService(String serviceEndPoint, String consumerKey, String secretKey, String payLoad,
-			String method, String contentType) {
+	public static String callPostService(String serviceEndPoint, String consumerKey, String secretKey, String payLoad) {
 		String response = new String();
 		HttpURLConnection urlConnection = null;
 		try {
@@ -69,7 +74,8 @@ public class OAuthApplication {
 			urlConnection = (HttpURLConnection) url.openConnection();
 			// Create an HttpURLConnection and add some headers
 			urlConnection.setRequestProperty("Accept", "application/json");
-			urlConnection.setRequestMethod(method);
+			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf8");
+			urlConnection.setRequestMethod("POST");
 			urlConnection.setReadTimeout(5 * 60 * 1000);
 			urlConnection.setDoOutput(true);
 
@@ -79,6 +85,16 @@ public class OAuthApplication {
 			doubleEncodedParams.put("realm", "");
 			dealabsConsumer.setAdditionalParameters(doubleEncodedParams);
 			dealabsConsumer.sign(urlConnection);
+
+			OutputStreamWriter outputStreamWriter = null;
+			try {
+				outputStreamWriter = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
+				outputStreamWriter.write(payLoad);
+			} finally {
+				if (outputStreamWriter != null) {
+					outputStreamWriter.close();
+				}
+			}
 
 			// Send the request and read the output
 			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
