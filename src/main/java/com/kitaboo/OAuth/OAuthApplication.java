@@ -85,7 +85,8 @@ public class OAuthApplication {
 			urlConnection = (HttpURLConnection) url.openConnection();
 			// Create an HttpURLConnection and add some headers
 			urlConnection.setRequestProperty("Accept", "application/json");
-			urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf8");
+			// urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf8");
+			urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf8");
 			urlConnection.setRequestMethod("POST");
 			urlConnection.setReadTimeout(5 * 60 * 1000);
 			urlConnection.setDoOutput(true);
