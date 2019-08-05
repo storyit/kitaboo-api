@@ -30,7 +30,18 @@ public class OAuthApplication {
 			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
 					System.getenv("SECRET_KEY"), body);
 			System.out.println(response);
-
+		} else if (System.getenv("ACTION").equals("purchase")) {
+			String postServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/order";
+			String body = System.getenv("DATA");
+			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
+					System.getenv("SECRET_KEY"), body);
+			System.out.println(response);
+		} else if (System.getenv("ACTION").equals("launch_book")) {
+			String postServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/LaunchBook?userID=testuser76122&bookID=14104841";
+			String body = null;
+			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
+					System.getenv("SECRET_KEY"), body);
+			System.out.println(response);
 		}
 	}
 
@@ -86,13 +97,15 @@ public class OAuthApplication {
 			dealabsConsumer.setAdditionalParameters(doubleEncodedParams);
 			dealabsConsumer.sign(urlConnection);
 
-			OutputStreamWriter outputStreamWriter = null;
-			try {
-				outputStreamWriter = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
-				outputStreamWriter.write(payLoad);
-			} finally {
-				if (outputStreamWriter != null) {
-					outputStreamWriter.close();
+			if (payLoad != null) {
+				OutputStreamWriter outputStreamWriter = null;
+				try {
+					outputStreamWriter = new OutputStreamWriter(urlConnection.getOutputStream(), "UTF-8");
+					outputStreamWriter.write(payLoad);
+				} finally {
+					if (outputStreamWriter != null) {
+						outputStreamWriter.close();
+					}
 				}
 			}
 
