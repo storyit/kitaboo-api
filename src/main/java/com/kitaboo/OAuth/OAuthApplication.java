@@ -31,6 +31,12 @@ public class OAuthApplication {
 			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
 					System.getenv("SECRET_KEY"), body, "application/json; charset=utf8");
 			System.out.println(response);
+		} else if (System.getenv("ACTION").equals("update_user")) {
+			String postServiceUrl = "https://cloud.kitaboo.com/DistributionServices/ext/api/updateUser";
+			String body = System.getenv("DATA");
+			String response = callPostService(postServiceUrl, System.getenv("CONSUMER_KEY"),
+					System.getenv("SECRET_KEY"), body, "application/json; charset=utf8");
+			System.out.println(response);
 		} else if (System.getenv("ACTION").equals("purchase")) {
 			// String postServiceUrl =
 			// "https://cloud.kitaboo.com/DistributionServices/ext/api/order?"
